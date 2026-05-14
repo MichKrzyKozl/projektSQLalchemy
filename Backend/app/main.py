@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import create_engine
 
+engine = create_engine("sqlite:///test.db")
 app = FastAPI()
 
 app.add_middleware(
