@@ -1,9 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+# from operation import Operation
+from app.database import SessionLocal
+from app.database import engine
+from app.database import Base
+from app.models.users import User
+from app.schemas.user import UserCreate
 
-engine = create_engine("sqlite:///test.db")
 app = FastAPI()
+Base.metadata.create_all(bind=engine)
+
+#operation = Operation()
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,3 +22,18 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"message": "backend działa"}
+
+@app.get("/users")
+def get_users():
+    db: Session = SessionLocal()
+    users = db.query(User).all()
+    return users
+@app.post("/users")
+def create_user(user_data: UserCreate):
+    db: Session = SessionLocal()
+    user = User(        name=user_data.name
+)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
