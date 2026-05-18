@@ -8,6 +8,7 @@ from app.database import Base
 import app.models
 from app.models.movie import Movie
 from app.models.movieRating import MovieRating
+from app.models.MovieRole import MovieRole
 from app.models.user import User
 from app.schemas.user import UserCreate
 app = FastAPI()
@@ -40,9 +41,24 @@ def get_moives():
 @app.post("/users")
 def create_user(user_data: UserCreate):
     db: Session = SessionLocal()
-    user = User(name=user_data.name
-)
+    user = User(name=user_data.name)
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
+
+@app.get("/movies/{movie_id}")
+def get_movie(movie_id: int):   
+        db: Session = SessionLocal()
+        movie = db.query(Movie).filter(Movie.id == movie_id).first()
+        return movie
+    
+@app.get("/movieroles/{movie_id}")
+def get_moviesroles(movie_id: int):
+    db: Session = SessionLocal()
+    roles = db.query(MovieRole).filter(MovieRole.movie_id == movie_id).all()
+    return roles   
+
+    
+    
+    
