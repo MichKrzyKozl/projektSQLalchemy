@@ -5,9 +5,11 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.database import engine
 from app.database import Base
-from app.models.users import User
+import app.models
+from app.models.movie import Movie
+from app.models.movieRating import MovieRating
+from app.models.user import User
 from app.schemas.user import UserCreate
-
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
@@ -28,10 +30,17 @@ def get_users():
     db: Session = SessionLocal()
     users = db.query(User).all()
     return users
+
+@app.get("/movies")
+def get_moives():
+    db: Session = SessionLocal()
+    movies = db.query(Movie).all()
+    return movies
+
 @app.post("/users")
 def create_user(user_data: UserCreate):
     db: Session = SessionLocal()
-    user = User(        name=user_data.name
+    user = User(name=user_data.name
 )
     db.add(user)
     db.commit()

@@ -10,6 +10,10 @@ export default function Home() {
         const users = await axios.get("http://127.0.0.1:8000/users")
         setuzyt(users.data)
     }
+    const getMovies = async () => {
+        const movies = await axios.get("http://127.0.0.1:8000/movies")
+        setuzyt(movies.data)
+    }
     const fetchData = async () => {
         try {
             const response = await axios.get("http://127.0.0.1:8000")
@@ -58,6 +62,7 @@ export default function Home() {
             >
                 Add user
             </button>
+            <button onClick={getMovies}>kurwa</button>
 
         </div>
     )
