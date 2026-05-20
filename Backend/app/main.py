@@ -9,6 +9,7 @@ import app.models
 from app.models.movie import Movie
 from app.models.movieRating import MovieRating
 from app.models.MovieRole import MovieRole
+from app.models.actor import Actor
 from app.models.user import User
 from app.schemas.user import UserCreate
 app = FastAPI()
@@ -59,6 +60,21 @@ def get_moviesroles(movie_id: int):
     roles = db.query(MovieRole).filter(MovieRole.movie_id == movie_id).all()
     return roles   
 
-    
-    
+@app.get("/movieactors/{movie_id}")
+def get_movie_role_actors(movie_id: int):
+    db: Session = SessionLocal()
+    actors = (
+        db.query(Actor)
+        .join(MovieRole, MovieRole.actor_id == Actor.id)
+        .filter(MovieRole.movie_id == movie_id)
+        .all()
+    )
+    return actors
+
+@app.get("/movieratings/{movie_id}")
+def get_movie_ratings(movie_id: int):
+    db: Session = SessionLocal()
+    ratings = db.query(MovieRating).filter(MovieRating.movie_id == movie_id).all()
+    return ratings
+        
     
