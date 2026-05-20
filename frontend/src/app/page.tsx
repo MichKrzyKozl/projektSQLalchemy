@@ -40,7 +40,7 @@ export default function Home() {
   async function fetchUsers() {
     try {
       const res = await axios.get(`${API_URL}/users`);
-      res.data;
+      setUsers(res.data);
     } catch (err) {
       console.error("users error:", err);
     }
