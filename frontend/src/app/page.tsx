@@ -15,13 +15,19 @@ type Movie = {
   id: number;
   title: string;
 };
+type Actor = {
+  id: number;
+  name: string;
+};
 
 export default function Home() {
   const [message, setMessage] = useState("loading...");
-  const [loadTime, setLoadTime] = useState<number | null>(null);
+  const [loadTime, setLoadTime] = useState<number | null>(0)
+  const [useEffectTime, setUseUffectTime] = useState<number>(0);
 
   const [users, setUsers] = useState<User[]>([]);
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [actors, setActors] = useState<Actor[]>([]);
   const router = useRouter();
   async function fetchMessage() {
     const start = Date.now();
@@ -54,6 +60,14 @@ export default function Home() {
       console.error("movies error:", err);
     }
   }
+  async function fetchActors() {
+    try {
+      const res = await axios.get(`${API_URL}/actors`);
+      setActors(res.data);
+    } catch (err) {
+      console.error("actors error:", err);
+    }
+  }
 
   async function createUser() {
     try {
@@ -68,9 +82,13 @@ export default function Home() {
   }
 
   useEffect(() => {
+    const start = Date.now()
     fetchMessage();
     fetchUsers();
     fetchMovies();
+    fetchActors()
+    const end = Date.now();
+    setUseUffectTime(end - start);
   }, []);
 
   return (
@@ -78,9 +96,10 @@ export default function Home() {
       <h1 className="text-4xl font-bold">
         {message}
         {loadTime !== null && ` (${loadTime} ms)`}
+        "loadtime"
+        {useEffectTime !== null && ` (${useEffectTime} ms)`}
       </h1>
       <div className="flex gap-10">
-        {/* USERS TABLE */}
         <div>
           <h2 className="text-xl font-semibold mb-2">Users</h2>
 
@@ -101,9 +120,25 @@ export default function Home() {
               ))}
             </tbody>
           </table>
+          <table className="border border-black w-64">
+            <thead>
+              <tr>
+                <th className="border p-2">ID</th>
+                <th className="border p-2">Name</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {actors.map((a) => (
+                <tr key={a.id}>
+                  <td className="border p-2">{a.id}</td>
+                  <td className="border p-2">{a.name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* MOVIES TABLE */}
         <div>
           <h2 className="text-xl font-semibold mb-2">Movies</h2>
 
@@ -120,7 +155,7 @@ export default function Home() {
                 <tr
                   key={m.id}
                   onClick={() => router.push(`/movies/${m.id}`)}
-                  className="cursor-pointer hover:bg-gray-200"
+                  className="cursor-pointer hover:border-dotted border-1"
                 >
                   <td className="border p-2">{m.id}</td>
                   <td className="border p-2">{m.title}</td>
@@ -136,7 +171,6 @@ export default function Home() {
           onClick={createUser}
           className="bg-black text-white px-4 py-2 rounded"
         >
-          Add user
         </button>
       </div>
     </div>

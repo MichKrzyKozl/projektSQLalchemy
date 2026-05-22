@@ -24,7 +24,7 @@ class Series(Base):
     title: Mapped[str] = mapped_column(String)
     release_date: Mapped[date] = mapped_column(Date)
     seasons: Mapped[int] = mapped_column(Integer)
-    ratings: Mapped[list["SeriesRating"]] = relationship(  # noqa: F821
+    ratings: Mapped[list["SeriesRating"]] = relationship(  
         back_populates="series",
         cascade="all, delete-orphan"
     )

@@ -11,7 +11,9 @@ from app.models.movieRating import MovieRating
 from app.models.MovieRole import MovieRole
 from app.models.actor import Actor
 from app.models.user import User
+from app.models.MovieRoleRating import MovieRoleRating
 from app.schemas.user import UserCreate
+
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
@@ -37,6 +39,11 @@ def get_users():
 def get_moives():
     db: Session = SessionLocal()
     movies = db.query(Movie).all()
+    return movies
+@app.get("/actors")
+def get_actors():
+    db: Session = SessionLocal()
+    movies = db.query(Actor).all()
     return movies
 
 @app.post("/users")
@@ -75,6 +82,11 @@ def get_movie_role_actors(movie_id: int):
 def get_movie_ratings(movie_id: int):
     db: Session = SessionLocal()
     ratings = db.query(MovieRating).filter(MovieRating.movie_id == movie_id).all()
+    return ratings
+@app.get("/roleratings/{role_id}")
+def get_role_ratings(role_id: int):
+    db: Session = SessionLocal()
+    ratings = db.query(MovieRoleRating).filter(MovieRoleRating.role_id == role_id).all()
     return ratings
         
     

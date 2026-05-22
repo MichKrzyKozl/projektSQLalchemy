@@ -12,6 +12,7 @@ type Movie = {
 };
 
 type Role = {
+  id:number;
   character_name: string;
   actor_id?: number;
 };
@@ -29,11 +30,12 @@ export default function MoviePage() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
   const [movieRating, setMovieRating] = useState<any>([]);
-
+const [roleRatings, setRoleRatings] = useState<any>({});
   async function getRoles() {
     const res = await axios.get(`${API_URL}/movieroles/${id}`);
     setRoles(res.data);
   }
+
 
   async function getActors() {
     const res = await axios.get(`${API_URL}/movieactors/${id}`);
@@ -54,13 +56,32 @@ export default function MoviePage() {
     setMovieRating(res.data);
   }
 
+  async function getRoleRating(role_id :number){
+    const res = await axios.get(`${API_URL}/roleratings/${role_id}`);
+    return(res.data);
+  }
+  async function getAllRoleRatings() {
+  const results: any = {};
+
+  for (const role of roles) {
+    const res = await axios.get(`${API_URL}/roleratings/${role.id}`);
+    results[role.id] = res.data;
+  }
+
+  setRoleRatings(results);
+}
+
   useEffect(() => {
     load();
     getRoles();
     getActors();
     getMovieRating();
   }, [id]);
-
+useEffect(() => {
+  if (roles.length > 0) {
+    getAllRoleRatings();
+  }
+}, [roles]);
   if (!movie) {
     return <div className="p-10">loading...</div>;
   }
@@ -82,6 +103,10 @@ export default function MoviePage() {
                 {role.character_name || "Unknown role"}
                 {" — "}
                 {actor ? `${actor.name} ${actor.surname}` : "Unknown actor"}
+                {"---"}
+                {roleRatings[role.id]?.length || 0}
+
+                
               </li>
             );
           })}
