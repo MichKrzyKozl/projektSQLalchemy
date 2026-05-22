@@ -282,6 +282,11 @@ series_role_ratings = [
     for i in range(16)
 ]
 
+ratings = ratings * 5
+actor_ratings = actor_ratings * 5
+movie_role_ratings = movie_role_ratings * 5
+series_role_ratings = series_role_ratings * 5
+
 db.add_all(ratings)
 db.add_all(actor_ratings)
 db.add_all(movie_role_ratings)

@@ -6,103 +6,131 @@ import { useRouter } from "next/navigation";
 
 const API_URL = "http://127.0.0.1:8000";
 
-type User = {
-  id: number;
-  name: string;
-};
-
-type Movie = {
-  id: number;
-  title: string;
-};
-type Actor = {
-  id: number;
-  name: string;
-};
+type User = { id: number; name: string };
+type Movie = { id: number; title: string };
+type Actor = { id: number; name: string; surname: string };
 
 export default function Home() {
-  const [message, setMessage] = useState("loading...");
-  const [loadTime, setLoadTime] = useState<number | null>(0)
-  const [useEffectTime, setUseUffectTime] = useState<number>(0);
+  const router = useRouter();
 
+  const [message, setMessage] = useState("loading...");
   const [users, setUsers] = useState<User[]>([]);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [actors, setActors] = useState<Actor[]>([]);
-  const router = useRouter();
+
+  const [times, setTimes] = useState({
+    message: 0,
+    users: 0,
+    movies: 0,
+    actors: 0,
+    total: 0,
+  });
+
   async function fetchMessage() {
-    const start = Date.now();
+    const start = performance.now();
 
-    try {
-      const res = await axios.get(API_URL);
-      const end = Date.now();
+    const res = await axios.get(API_URL);
+    setMessage(res.data.message);
 
-      setMessage(res.data.message);
-      setLoadTime(end - start);
-    } catch (err) {
-      console.error("message error:", err);
-    }
+    const end = performance.now();
+    setTimes((prev) => ({ ...prev, message: end - start }));
   }
 
   async function fetchUsers() {
-    try {
-      const res = await axios.get(`${API_URL}/users`);
-      setUsers(res.data);
-    } catch (err) {
-      console.error("users error:", err);
-    }
+    const start = performance.now();
+
+    const res = await axios.get(`${API_URL}/users`);
+    setUsers(res.data);
+
+    const end = performance.now();
+    setTimes((prev) => ({ ...prev, users: end - start }));
   }
 
   async function fetchMovies() {
-    try {
-      const res = await axios.get(`${API_URL}/movies`);
-      setMovies(res.data);
-    } catch (err) {
-      console.error("movies error:", err);
-    }
+    const start = performance.now();
+
+    const res = await axios.get(`${API_URL}/movies`);
+    setMovies(res.data);
+
+    const end = performance.now();
+    setTimes((prev) => ({ ...prev, movies: end - start }));
   }
+
   async function fetchActors() {
-    try {
-      const res = await axios.get(`${API_URL}/actors`);
-      setActors(res.data);
-    } catch (err) {
-      console.error("actors error:", err);
-    }
-  }
+    const start = performance.now();
 
-  async function createUser() {
-    try {
-      await axios.post(`${API_URL}/users`, {
-        name: "Paweł",
-      });
+    const res = await axios.get(`${API_URL}/actors`);
+    setActors(res.data);
 
-      fetchUsers();
-    } catch (err) {
-      console.error("create user error:", err);
-    }
+    const end = performance.now();
+    setTimes((prev) => ({ ...prev, actors: end - start }));
   }
 
   useEffect(() => {
-    const start = Date.now()
-    fetchMessage();
-    fetchUsers();
-    fetchMovies();
-    fetchActors()
-    const end = Date.now();
-    setUseUffectTime(end - start);
+    const startTotal = performance.now();
+
+    Promise.all([
+      fetchMessage(),
+      fetchUsers(),
+      fetchMovies(),
+      fetchActors(),
+    ]).then(() => {
+      const endTotal = performance.now();
+
+      setTimes((prev) => ({
+        ...prev,
+        total: endTotal - startTotal,
+      }));
+    });
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-10">
-      <h1 className="text-4xl font-bold">
-        {message}
-        {loadTime !== null && ` (${loadTime} ms)`}
-        "loadtime"
-        {useEffectTime !== null && ` (${useEffectTime} ms)`}
-      </h1>
+      <h1 className="text-4xl font-bold">{message}</h1>
+
+      <div>
+        <h2 className="text-xl font-semibold mb-2">Load times</h2>
+
+        <table className="border border-black w-96">
+          <thead>
+            <tr>
+              <th className="border p-2">Function</th>
+              <th className="border p-2">Time (ms)</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td className="border p-2">Message</td>
+              <td className="border p-2">{times.message.toFixed(1)}</td>
+            </tr>
+
+            <tr>
+              <td className="border p-2">Users</td>
+              <td className="border p-2">{times.users.toFixed(1)}</td>
+            </tr>
+
+            <tr>
+              <td className="border p-2">Movies</td>
+              <td className="border p-2">{times.movies.toFixed(1)}</td>
+            </tr>
+
+            <tr>
+              <td className="border p-2">Actors</td>
+              <td className="border p-2">{times.actors.toFixed(1)}</td>
+            </tr>
+
+            <tr className="font-bold">
+              <td className="border p-2">Total</td>
+              <td className="border p-2">{times.total.toFixed(1)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div className="flex gap-10">
         <div>
           <h2 className="text-xl font-semibold mb-2">Users</h2>
-
           <table className="border border-black w-64">
             <thead>
               <tr>
@@ -110,7 +138,6 @@ export default function Home() {
                 <th className="border p-2">Name</th>
               </tr>
             </thead>
-
             <tbody>
               {users.map((u) => (
                 <tr key={u.id}>
@@ -120,6 +147,10 @@ export default function Home() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Actors</h2>
           <table className="border border-black w-64">
             <thead>
               <tr>
@@ -127,12 +158,13 @@ export default function Home() {
                 <th className="border p-2">Name</th>
               </tr>
             </thead>
-
             <tbody>
               {actors.map((a) => (
                 <tr key={a.id}>
                   <td className="border p-2">{a.id}</td>
-                  <td className="border p-2">{a.name}</td>
+                  <td className="border p-2">
+                    {a.name} {a.surname}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -141,7 +173,6 @@ export default function Home() {
 
         <div>
           <h2 className="text-xl font-semibold mb-2">Movies</h2>
-
           <table className="border border-black w-64">
             <thead>
               <tr>
@@ -149,13 +180,12 @@ export default function Home() {
                 <th className="border p-2">Title</th>
               </tr>
             </thead>
-
             <tbody>
               {movies.map((m) => (
                 <tr
                   key={m.id}
                   onClick={() => router.push(`/movies/${m.id}`)}
-                  className="cursor-pointer hover:border-dotted border-1"
+                  className="cursor-pointer hover:bg-gray-100"
                 >
                   <td className="border p-2">{m.id}</td>
                   <td className="border p-2">{m.title}</td>
@@ -164,14 +194,6 @@ export default function Home() {
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div className="flex gap-3">
-        <button
-          onClick={createUser}
-          className="bg-black text-white px-4 py-2 rounded"
-        >
-        </button>
       </div>
     </div>
   );
