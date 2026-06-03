@@ -291,6 +291,72 @@ db.add_all(ratings)
 db.add_all(actor_ratings)
 db.add_all(movie_role_ratings)
 db.add_all(series_role_ratings)
+# =========================
+# EXTRA TEST ROLES (first 5 movies -> 8 actors each)
+# =========================
+
+extra_movie_roles = [
+    # Inception
+    MovieRole(character_name="Arthur", actor=actors[1], movie=movies[0]),              # Keanu Reeves
+    MovieRole(character_name="Ariadne", actor=actors[2], movie=movies[0]),             # Scarlett Johansson
+    MovieRole(character_name="Eames", actor=actors[3], movie=movies[0]),               # Robert Downey Jr.
+    MovieRole(character_name="Saito", actor=actors[10], movie=movies[0]),              # Christian Bale
+    MovieRole(character_name="Robert Fischer", actor=actors[12], movie=movies[0]),     # Cillian Murphy
+    MovieRole(character_name="Mal", actor=actors[11], movie=movies[0]),                # Anne Hathaway
+    MovieRole(character_name="Yusuf", actor=actors[17], movie=movies[0]),              # Emma Stone
+
+    # The Matrix
+    MovieRole(character_name="Morpheus", actor=actors[3], movie=movies[1]),
+    MovieRole(character_name="Trinity", actor=actors[2], movie=movies[1]),
+    MovieRole(character_name="Agent Smith", actor=actors[10], movie=movies[1]),
+    MovieRole(character_name="Oracle", actor=actors[11], movie=movies[1]),
+    MovieRole(character_name="Cypher", actor=actors[12], movie=movies[1]),
+    MovieRole(character_name="Tank", actor=actors[8], movie=movies[1]),
+    MovieRole(character_name="Dozer", actor=actors[16], movie=movies[1]),
+
+    # Avengers: Endgame (already has 2)
+    MovieRole(character_name="Steve Rogers", actor=actors[8], movie=movies[2]),
+    MovieRole(character_name="Thor", actor=actors[6], movie=movies[2]),
+    MovieRole(character_name="Doctor Strange", actor=actors[20], movie=movies[2]),
+    MovieRole(character_name="Spider-Man", actor=actors[22], movie=movies[2]),
+    MovieRole(character_name="Captain Marvel", actor=actors[5], movie=movies[2]),
+    MovieRole(character_name="Hulk", actor=actors[7], movie=movies[2]),
+
+    # Lucy
+    MovieRole(character_name="Pierre Del Rio", actor=actors[14], movie=movies[3]),
+    MovieRole(character_name="Professor Norman", actor=actors[4], movie=movies[3]),
+    MovieRole(character_name="Richard", actor=actors[8], movie=movies[3]),
+    MovieRole(character_name="Jang", actor=actors[10], movie=movies[3]),
+    MovieRole(character_name="French Agent", actor=actors[1], movie=movies[3]),
+    MovieRole(character_name="Scientist", actor=actors[20], movie=movies[3]),
+    MovieRole(character_name="Doctor", actor=actors[11], movie=movies[3]),
+
+    # Forrest Gump
+    MovieRole(character_name="Jenny Curran", actor=actors[17], movie=movies[4]),
+    MovieRole(character_name="Lieutenant Dan", actor=actors[10], movie=movies[4]),
+    MovieRole(character_name="Bubba", actor=actors[7], movie=movies[4]),
+    MovieRole(character_name="Mrs. Gump", actor=actors[11], movie=movies[4]),
+    MovieRole(character_name="Young Forrest", actor=actors[23], movie=movies[4]),
+    MovieRole(character_name="Football Coach", actor=actors[3], movie=movies[4]),
+    MovieRole(character_name="President", actor=actors[12], movie=movies[4]),
+]
+
+db.add_all(extra_movie_roles)
+
+# =========================
+# EXTRA MOVIE ROLE RATINGS (reviews for extra_movie_roles)
+# =========================
+
+extra_movie_role_ratings = [
+    MovieRoleRating(
+        value=(i % 10), 
+        user=users[i % len(users)],
+        role=extra_movie_roles[i % len(extra_movie_roles)],
+    )
+    for i in range(35)
+]
+
+db.add_all(extra_movie_role_ratings)
 
 db.commit()
 db.close()

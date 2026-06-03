@@ -10,8 +10,7 @@ type Movie = { id: number; title: string };
 type Role = { id: number; character_name: string; actor_id?: number };
 type Actor = { id: number; name: string; surname: string };
 
-export default function MoviePage()
-{
+export default function MoviePage() {
   const { id } = useParams();
 
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -29,8 +28,7 @@ export default function MoviePage()
     total: 0
   });
 
-  async function loadMovie()
-  {
+  async function loadMovie() {
     const start = performance.now();
 
     const res = await axios.get(`${API_URL}/movies/${id}`);
@@ -41,8 +39,7 @@ export default function MoviePage()
     setTimes(prev => ({ ...prev, movie: end - start }));
   }
 
-  async function getRoles()
-  {
+  async function getRoles() {
     const start = performance.now();
 
     const res = await axios.get(`${API_URL}/movieroles/${id}`);
@@ -53,8 +50,7 @@ export default function MoviePage()
     setTimes(prev => ({ ...prev, roles: end - start }));
   }
 
-  async function getActors()
-  {
+  async function getActors() {
     const start = performance.now();
 
     const res = await axios.get(`${API_URL}/movieactors/${id}`);
@@ -65,8 +61,7 @@ export default function MoviePage()
     setTimes(prev => ({ ...prev, actors: end - start }));
   }
 
-  async function getMovieRating()
-  {
+  async function getMovieRating() {
     const start = performance.now();
 
     const res = await axios.get(`${API_URL}/movieratings/${id}`);
@@ -77,14 +72,12 @@ export default function MoviePage()
     setTimes(prev => ({ ...prev, movieRating: end - start }));
   }
 
-  async function getAllRoleRatings()
-  {
+  async function getAllRoleRatings() {
     const start = performance.now();
 
     const results: any = {};
 
-    for (const role of roles)
-    {
+    for (const role of roles) {
       const res = await axios.get(`${API_URL}/roleratings/${role.id}`);
       results[role.id] = res.data;
     }
@@ -96,8 +89,7 @@ export default function MoviePage()
     setTimes(prev => ({ ...prev, roleRatings: end - start }));
   }
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     const startTotal = performance.now();
 
     Promise.all([
@@ -105,8 +97,7 @@ export default function MoviePage()
       getRoles(),
       getActors(),
       getMovieRating()
-    ]).then(() =>
-    {
+    ]).then(() => {
       const endTotal = performance.now();
 
       setTimes(prev => ({
@@ -117,16 +108,13 @@ export default function MoviePage()
 
   }, [id]);
 
-  useEffect(() =>
-  {
-    if (roles.length > 0)
-    {
+  useEffect(() => {
+    if (roles.length > 0) {
       getAllRoleRatings();
     }
   }, [roles]);
 
-  if (!movie)
-  {
+  if (!movie) {
     return <div className="p-10">loading...</div>;
   }
 
@@ -184,15 +172,23 @@ export default function MoviePage()
         <h2 className="text-xl font-semibold mb-2">Characters</h2>
 
         <ul className="list-disc list-inside">
-          {roles.map(role =>
-          {
+          {roles.map(role => {
             const actor = actors.find(a => a.id === role.actor_id);
+            const ratings = roleRatings[role.id] || [];
+            const avg_rating = ratings
+              ? (
+                ratings.reduce(
+                  (sum: number, r: any) => sum + r.value,
+                  0
+                ) / ratings.length
+              ).toFixed(1)
+              : "-21.37";
 
             return (
               <li key={role.id}>
                 {role.character_name} —{" "}
                 {actor ? `${actor.name} ${actor.surname}` : "Unknown"} —{" "}
-                {roleRatings[role.id]?.length || 0}
+                {avg_rating}
               </li>
             );
           })}
