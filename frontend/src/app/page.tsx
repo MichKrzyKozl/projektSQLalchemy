@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelectedUser } from "../contexts/SelectedUserContext";
 
 const API_URL = "http://127.0.0.1:8000";
 
@@ -84,9 +85,20 @@ export default function Home() {
     });
   }, []);
 
+  const { selectedUserId, setSelectedUserId } = useSelectedUser();
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-10">
       <h1 className="text-4xl font-bold">{message}</h1>
+
+      <div className="mb-4">
+        <strong>Acting as: </strong>
+        {selectedUserId ? (
+          <span className="ml-2">{users.find((u) => u.id === selectedUserId)?.name ?? selectedUserId} <button className="ml-4 text-sm text-red-500" onClick={() => setSelectedUserId(null)}>Clear</button></span>
+        ) : (
+          <span className="ml-2 text-gray-500">(no user selected)</span>
+        )}
+      </div>
 
       <div>
         <h2 className="text-xl font-semibold mb-2">Load times</h2>
@@ -140,7 +152,11 @@ export default function Home() {
             </thead>
             <tbody>
               {users.map((u) => (
-                <tr key={u.id}>
+                <tr
+                  key={u.id}
+                  onClick={() => setSelectedUserId(u.id)}
+                  className={`cursor-pointer hover:bg-gray-100 ${selectedUserId === u.id ? "bg-yellow-100 font-semibold" : ""}`}
+                >
                   <td className="border p-2">{u.id}</td>
                   <td className="border p-2">{u.name}</td>
                 </tr>

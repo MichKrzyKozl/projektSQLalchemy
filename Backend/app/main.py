@@ -13,6 +13,7 @@ from app.models.actor import Actor
 from app.models.user import User
 from app.models.MovieRoleRating import MovieRoleRating
 from app.schemas.user import UserCreate
+from app.schemas.review import ReviewCreate
 from fastapi import Depends
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -56,6 +57,30 @@ def create_user(user_data: UserCreate,db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
     return user
+@app.post("/movieReview")
+def create_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
+    user_id = int(review_data.user_id)
+    movie_review = MovieRating(
+        value=review_data.value,
+        user_id=user_id,
+        movie_id=review_data.reviewed_id,
+    )
+    db.add(movie_review)
+    db.commit()
+    db.refresh(movie_review)
+    return movie_review
+@app.post("/movieRoleReview")
+def create_movie_role_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
+    user_id = int(review_data.user_id)
+    role_review = MovieRoleRating(
+        value=review_data.value,
+        user_id=user_id,
+        role_id=review_data.reviewed_id,
+    )
+    db.add(role_review)
+    db.commit()
+    db.refresh(role_review)
+    return role_review
 
 @app.get("/movies/{movie_id}")
 def get_movie(movie_id: int,db: Session = Depends(get_db)):   

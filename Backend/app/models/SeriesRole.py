@@ -1,14 +1,10 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING
-
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
-
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-
 from app.database import Base
 
 if TYPE_CHECKING:
@@ -26,10 +22,7 @@ class SeriesRole(Base):
 
     series_id: Mapped[int] = mapped_column(ForeignKey("series.id"))
 
-    actor: Mapped["Actor"] = relationship(
-        back_populates="series_roles"
-    )
-
+    actor: Mapped["Actor"] = relationship(back_populates="series_roles")
     series: Mapped["Series"] = relationship(back_populates="roles")
 
     ratings: Mapped[list["SeriesRoleRating"]] = relationship(

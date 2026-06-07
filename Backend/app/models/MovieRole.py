@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
@@ -11,32 +13,19 @@ if TYPE_CHECKING:
 
 
 class MovieRole(Base):
-
     __tablename__ = "movie_roles"
 
-    id: Mapped[int] = mapped_column(
-        primary_key=True,
-        autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    character_name: Mapped[str] = mapped_column(
-        String
-    )
+    character_name: Mapped[str] = mapped_column(String)
 
-    actor_id: Mapped[int] = mapped_column(
-        ForeignKey("actors.id")
-    )
+    actor_id: Mapped[int] = mapped_column(ForeignKey("actors.id"))
 
-    movie_id: Mapped[int] = mapped_column(
-        ForeignKey("movies.id")
-    )
+    movie_id: Mapped[int] = mapped_column(ForeignKey("movies.id"))
 
-    actor: Mapped["Actor"] = relationship(
-        back_populates="movie_roles"
-    )
+    actor: Mapped["Actor"] = relationship(back_populates="movie_roles")
     movie: Mapped["Movie"] = relationship(back_populates="roles")
 
     ratings: Mapped[list["MovieRoleRating"]] = relationship(
-        back_populates="role",
-        cascade="all, delete-orphan"
+        back_populates="role", cascade="all, delete-orphan"
     )
