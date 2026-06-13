@@ -17,28 +17,30 @@ type Props = {
 export default function Characters({ roles, actors, movieroleRatings, roleRatingsInput, setRoleRatingsInput, addRoleReview }: Props) {
   return (
     <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">Characters</h2>
+      <h2 className="text-xl font-semibold mb-2">Characters</h2>
 
-        <ul className="list-disc list-inside">
-          {roles.map(role => {
-            const actor = actors.find(a => a.id === role.actor_id);
-            const ratings = movieroleRatings[role.id] || [];
-            const avg_rating = ratings
-              ? (
-                ratings.reduce(
-                  (sum: number, r: any) => sum + r.value,
-                  0
-                ) / ratings.length
-              ).toFixed(1)
-              : "-21.37";
+      <ul className=" list-inside">
+        {roles.map(role => {
+          const actor = actors.find(a => a.id === role.actor_id);
+          const ratings = movieroleRatings[role.id] || [];
+          const avg_rating = ratings
+            ? (
+              ratings.reduce(
+                (sum: number, r: any) => sum + r.value,
+                0
+              ) / ratings.length
+            ).toFixed(1)
+            : "-21.37";
 
-            return (
-              <li key={role.id}>
+          return (
+            <li key={role.id} className="mb-4">
+              <div>
                 {role.character_name} —{" "}
                 {actor ? `${actor.name} ${actor.surname}` : "Unknown"} —{" "}
                 {avg_rating}
-                <div> parapapappap</div>
-                {role.id}
+              </div>
+
+              <div className="flex items-center gap-3 mt-2">
                 <input
                   type="range"
                   min="1"
@@ -50,30 +52,24 @@ export default function Characters({ roles, actors, movieroleRatings, roleRating
                       [role.id]: Number(e.target.value)
                     })
                   }
-                  style={{
-                    accentColor:
-                      (roleRatingsInput[role.id] || 5) <= 3
-                        ? "red"
-                        : (roleRatingsInput[role.id] || 5) <= 6
-                          ? "orange"
-                          : "green"
-                  }}
-                  className="w-full"
+                  className="w-48"
                 />
 
-                <div className="text-center text-lg font-bold">
-                  {roleRatingsInput[role.id] || 1} / 10
-                </div>
+                <span className="font-bold">
+                  {roleRatingsInput[role.id] || 1}/10
+                </span>
 
                 <button
                   onClick={() => addRoleReview(role.id)}
-                  className="bg-gray-400 text-white py-2 rounded-lg hover:bg-white-700 cursor-pointer active:scale-95 transition"
+                  className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
                 >
                   Dodaj
                 </button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  )
+}

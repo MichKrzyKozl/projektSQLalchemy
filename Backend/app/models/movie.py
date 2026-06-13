@@ -16,6 +16,7 @@ class Movie(Base):
     __tablename__ = "movies"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String)
+    category: Mapped[str] = mapped_column(String)
     release_date: Mapped[date] = mapped_column(Date)
     runtime_minutes: Mapped[int] = mapped_column(Integer)
 

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelectedUser } from "../../../contexts/SelectedUserContext";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Characters from "./components/characters"
 import MovieReview from "./components/movieReview";
 import SelectUser from "../../components/selectUser";
@@ -14,6 +15,7 @@ type Role = { id: number; character_name: string; actor_id?: number };
 type Actor = { id: number; name: string; surname: string };
 
 export default function MoviePage() {
+    const router = useRouter();
   const { id } = useParams();
   const [rating, setRating] = useState(5);
   const [roleRatingsInput, setRoleRatingsInput] = useState<{
@@ -121,7 +123,8 @@ export default function MoviePage() {
 
   return (
     <div className="p-10">
-
+      <div                            onClick={() => router.push(`/`)}
+> Strona głowna </div>
       <h1 className="text-3xl font-bold">{movie.title}</h1>
       <SelectUser
         selectedUserId={selectedUserId}

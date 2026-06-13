@@ -22,6 +22,7 @@ class Series(Base):
         autoincrement=True
     )
     title: Mapped[str] = mapped_column(String)
+    category: Mapped[str] = mapped_column(String)
     release_date: Mapped[date] = mapped_column(Date)
     seasons: Mapped[int] = mapped_column(Integer)
     ratings: Mapped[list["SeriesRating"]] = relationship(  

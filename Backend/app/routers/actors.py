@@ -1,0 +1,119 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+from app.deps import get_db
+from app.models.actor import Actor
+from app.models.actorRating import ActorRating
+from app.models.MovieRole import MovieRole
+from app.models.user import User
+from app.schemas.review import ReviewCreate
+
+router = APIRouter()
+
+
+@router.get("/actors")
+def get_actors(
+    db: Session = Depends(get_db)
+):
+    rows = (
+        db.query(
+            Actor,
+            func.avg(
+                ActorRating.value
+            ).label("avg_rating")
+        )
+        .outerjoin(
+            ActorRating,
+            ActorRating.actor_id == Actor.id
+        )
+        .group_by(
+            Actor.id
+        )
+        .all()
+    )
+
+    return [
+        {
+            "id": actor.id,
+            "name": actor.name,
+            "avg_rating": (
+                float(avg)
+                if avg is not None
+                else None
+            ),
+        }
+        for actor, avg in rows
+    ]
+
+
+@router.get("/actors/{actor_id}")
+def get_actor(actor_id: int, db: Session = Depends(get_db)):
+	actor = db.query(Actor).filter(Actor.id == actor_id).first()
+	return actor
+
+
+@router.get("/actorMovies/{actor_id}")
+def get_actor_movies(actor_id: int, db: Session = Depends(get_db)):
+
+	roles = (
+		db.query(MovieRole)
+		.filter(MovieRole.actor_id == actor_id)
+		.all()
+	)
+
+	results = []
+
+	for role in roles:
+		avg = None
+
+		if role.ratings:
+			avg = sum(r.value for r in role.ratings) / len(role.ratings)
+
+		results.append({
+			"movie_id": role.movie.id,
+			"title": role.movie.title,
+			"role_id": role.id,
+			"character_name": role.character_name,
+			"avg_rating": avg,
+		})
+
+	return results
+
+
+@router.get("/actorratings/{actor_id}")
+def get_actor_ratings(actor_id: int, db: Session = Depends(get_db)):
+	rows = (
+		db.query(ActorRating, User)
+		.join(User, ActorRating.user_id == User.id)
+		.filter(ActorRating.actor_id == actor_id)
+		.all()
+	)
+
+	results = []
+	for actor_rating, user in rows:
+		results.append(
+			{
+				"id": actor_rating.id,
+				"value": actor_rating.value,
+				"user_id": actor_rating.user_id,
+				"user_name": user.name,
+			}
+		)
+
+	return results
+
+
+@router.post("/actorReview")
+def create_actor_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
+	user_id = int(review_data.user_id)
+	actor_review = ActorRating(
+		value=review_data.value,
+		user_id=user_id,
+		actor_id=review_data.reviewed_id,
+	)
+	db.add(actor_review)
+	db.commit()
+	db.refresh(actor_review)
+	return actor_review
+

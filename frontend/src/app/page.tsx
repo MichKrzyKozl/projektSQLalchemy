@@ -20,6 +20,9 @@ export default function Home() {
   const [message, setMessage] = useState("ładowanieg...");
   const [users, setUsers] = useState<User[]>([]);
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [allCategories, setAllCategories] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<any>("none");
   const [actors, setActors] = useState<Actor[]>([]);
   const { selectedUserId, setSelectedUserId } = useSelectedUser();
 
@@ -33,10 +36,14 @@ export default function Home() {
     setUsers(res.data);
   }
 
-  async function fetchMovies() {
-    const res = await axios.get(`${API_URL}/movies`);
-    console.log(res)
-        console.log(res.data)
+  async function fetchMovies(category?: any, sort?: any) {
+    let url = `${API_URL}/movies`;
+    if (sort === "asc") url = `${API_URL}/movies/asc`;
+    else if (sort === "desc") url = `${API_URL}/movies/desc`;
+    const params = {
+      category: category ?? undefined
+    };
+    const res = await axios.get(url, { params });
     setMovies(res.data);
   }
 
@@ -45,13 +52,56 @@ export default function Home() {
     setActors(res.data);
   }
 
+  async function fetchAllCategories() {
+    const res = await axios.get(`${API_URL}/categories`);
+    setAllCategories(res.data);
+
+  }
+
   useEffect(() => {
     fetchMessage();
     fetchUsers();
     fetchMovies();
+    fetchAllCategories();
     fetchActors();
   }, []);
 
+
+
+  function handleSortChange(sort: any) {
+    setSortOrder(sort);
+
+    let selectedSort = sort;
+
+    if (sort === "none") {
+      selectedSort = undefined;
+    }
+
+    fetchMovies(
+      categoryFilter || undefined,
+      selectedSort
+    );
+  }
+
+  function handleCategoryChange(category: any) {
+    setCategoryFilter(category);
+
+    let selectedCategory = category;
+    let selectedSort = sortOrder;
+
+    if (category === "") {
+      selectedCategory = undefined;
+    }
+
+    if (sortOrder === "none") {
+      selectedSort = undefined;
+    }
+
+    fetchMovies(
+      selectedCategory,
+      selectedSort
+    );
+  }
 
 
   return (
@@ -65,20 +115,48 @@ export default function Home() {
       />
       <div className="flex gap-10">
 
-      <UserList
-        users={users}
-        selectedUserId={selectedUserId} setSelectedUserId={setSelectedUserId}
-      />
-    <ActorList
-    actors = {actors}
-    router ={router}/>
-    <MovieList
-    movies = {movies}
-    router ={router}/>
+        <UserList
+          users={users}
+          selectedUserId={selectedUserId} setSelectedUserId={setSelectedUserId}
+        />
+        <ActorList
+          actors={actors}
+          router={router} />
+        <MovieList
+          movies={movies}
+          router={router} />
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Kategoria</label>
+          <select
+            value={categoryFilter}
+            onChange={(e) =>
+              handleCategoryChange(
+                e.target.value
+              )
+            }
+          >
+            <option value="">Wszystkie</option>
+            {allCategories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
 
-
-        
-        
+          <label className="font-medium mt-2">Sortuj po średniej ocenie</label>
+          <select
+            value={sortOrder}
+            onChange={(e) =>
+              handleSortChange(
+                e.target.value
+              )
+            }
+          >
+            <option value="none">Brak</option>
+            <option value="asc">Rosnąco</option>
+            <option value="desc">Malejąco</option>
+          </select>
+        </div>
       </div>
     </div>
   );
