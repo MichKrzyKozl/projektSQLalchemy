@@ -1,7 +1,4 @@
 "use client";
-
-"use client";
-
 import { useRouter } from "next/navigation";
 import SeriesList from "../components/seriesList";
 

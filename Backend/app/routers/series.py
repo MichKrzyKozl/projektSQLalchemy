@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
-from app.deps import get_db
+from app.database import get_db
 from app.models.series import Series
 from app.models.seriesRating import SeriesRating
 from app.models.SeriesRole import SeriesRole
@@ -25,28 +24,26 @@ def get_series(category=None, sort=None, db: Session = Depends(get_db)):
         .outerjoin(SeriesRating, SeriesRating.series_id == Series.id)
         .group_by(Series.id)
     )
-
     if category:
         query = query.filter(Series.category == category)
-
     if sort == "asc":
         query = query.order_by(func.avg(SeriesRating.value).asc())
-
     elif sort == "desc":
         query = query.order_by(func.avg(SeriesRating.value).desc())
-
-    rows = query.all()
-
-    return [
-        {
+    rows = query.all()    
+    formatted_series = []
+    for series, avg in rows:        
+        end = {
             "id": series.id,
             "title": series.title,
             "category": series.category,
             "release_date": series.release_date,
-            "avg_rating": float(avg) if avg is not None else None,
+            "seasons": series.seasons,  
+			"avg_rating": float(avg) if avg is not None else None,		
         }
-        for series, avg in rows
-    ]
+        formatted_series.append(end)
+
+    return formatted_series
 
 
 @router.get("/series/asc")

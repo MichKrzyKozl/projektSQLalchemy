@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
-from app.deps import get_db
+from app.database import get_db
 from app.models.movie import Movie
 from app.models.movieRating import MovieRating
 from app.models.MovieRole import MovieRole
@@ -37,16 +36,20 @@ def get_movies(category=None, sort=None, db: Session = Depends(get_db)):
 
 	rows = query.all()
 
-	return [
-		{
+	formatted_movies = []
+
+	for movie, avg in rows:			
+		movies = {
 			"id": movie.id,
 			"title": movie.title,
 			"category": movie.category,
 			"release_date": movie.release_date,
-			"avg_rating": float(avg) if avg is not None else None,
-		}
-		for movie, avg in rows
-	]
+			"avg_rating": float(avg) if avg is not None else None,		
+			}
+		
+		formatted_movies.append(movies)
+
+	return formatted_movies
 
 
 @router.get("/movies/asc")
@@ -61,15 +64,11 @@ def get_movies_desc(category=None, db: Session = Depends(get_db)):
 
 @router.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
-	rows = db.query(Movie.category).distinct().all()
-
-	categories = []
-	for category, in rows:
-		if category is not None:
-			categories.append(category)
-
+	bad_categories = db.query(Movie.category).distinct().all()
+	categories = [] 
+	for category in bad_categories:
+		categories.append(category[0])	
 	return categories
-
 
 @router.get("/movies/{movie_id}")
 def get_movie(movie_id: int, db: Session = Depends(get_db)):

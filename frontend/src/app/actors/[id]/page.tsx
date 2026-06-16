@@ -7,6 +7,7 @@ import ActorMovies from "./components/actorMovies";
 import ActorReview from "./components/actorRevievs";
 import ActorRating from "./components/actorRatings";
 import { useRouter } from "next/navigation";
+import SelectUser from "@/app/components/selectUser";
 
 const API_URL = "http://127.0.0.1:8000";
 
@@ -17,7 +18,7 @@ type ActorMovie = { movie_id: number; title: string; role_id: number; character_
 
 
 export default function ActorPage() {
-    const router = useRouter();
+  const router = useRouter();
   const { id } = useParams();
   const [actor, setActor] = useState<Actor | null>(null);
   const [rating, setRating] = useState<any>(0)
@@ -91,10 +92,13 @@ export default function ActorPage() {
   }
 
   return (
-    
+
     <div className="p-10">
-      <div                            onClick={() => router.push(`/`)}
-> Strona głowna </div>
+      <div onClick={() => router.push(`/`)}> Strona głowna </div>
+            <SelectUser
+              selectedUserId={selectedUserId}
+              selectedUserName={selectedUserName}
+              setSelectedUserId={setSelectedUserId} />
       <h1 className="text-3xl font-bold">{actor.name} {actor.surname}</h1>
       <ActorMovies
         actorMovies={actorMovies}

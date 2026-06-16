@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-
-from app.deps import get_db
+from app.database import get_db
 from app.models.actor import Actor
 from app.models.actorRating import ActorRating
 from app.models.MovieRole import MovieRole
