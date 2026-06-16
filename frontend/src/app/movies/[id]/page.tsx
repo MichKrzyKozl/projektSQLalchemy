@@ -12,7 +12,7 @@ const API_URL = "http://127.0.0.1:8000";
 
 type Movie = { id: number; title: string; release_date: any };
 type Role = { id: number; character_name: string; actor_id?: number };
-type Actor = { id: number; name: string; surname: string };
+type Actor = { id: number; name: string; surname: string,date_of_birth:any };
 
 export default function MoviePage() {
   const router = useRouter();
@@ -131,7 +131,6 @@ export default function MoviePage() {
         selectedUserName={selectedUserName}
         setSelectedUserId={setSelectedUserId} />
 
-      <p>Movie ID: {movie.id}</p>
       <p>Data wydania: {movie.release_date}</p>
 
       <Characters

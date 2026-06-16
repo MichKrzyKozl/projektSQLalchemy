@@ -51,41 +51,40 @@ export default function AddRole({ setMsg }: { setMsg: (m: string) => void }) {
 
     return (
         <section className="mb-8">
-            <h2 className="text-xl font-semibold">Add Role</h2>
+            <h2 className="text-xl font-semibold">Dodaj Role</h2>
             <form onSubmit={submit} className="flex flex-col gap-2 max-w-md">
-                <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Character name" value={character} onChange={(e) => setCharacter(e.target.value)} />
+                <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Imie" value={character} onChange={(e) => setCharacter(e.target.value)} />
                 <label className="font-medium">Actor</label>
                 <select className="border border-white p-2 rounded bg-transparent text-white" value={actorId ?? ''} onChange={(e) => setActorId(Number(e.target.value) || null)}>
-                    <option value="">Select actor</option>
+                    <option value="">Wybierz aktora</option>
                     {actorsList.map(a => (<option key={a.id} value={a.id}>{a.name} {a.surname}</option>))}
                 </select>
 
-                <label className="font-medium">Target</label>
                 <div className="flex gap-2">
-                    <label><input type="radio" checked={targetType === 'movie'} onChange={() => setTargetType('movie')} /> Movie</label>
-                    <label><input type="radio" checked={targetType === 'series'} onChange={() => setTargetType('series')} /> Series</label>
+                    <label><input type="radio" checked={targetType === 'movie'} onChange={() => setTargetType('movie')} /> Film</label>
+                    <label><input type="radio" checked={targetType === 'series'} onChange={() => setTargetType('series')} /> Serial</label>
                 </div>
 
                 {targetType === 'movie' ? (
                     <>
-                        <label className="font-medium">Movie</label>
+                        <label className="font-medium">Film</label>
                         <select className="border border-white p-2 rounded bg-transparent text-white" value={movieId ?? ''} onChange={(e) => setMovieId(Number(e.target.value) || null)}>
-                            <option value="">Select movie</option>
+                            <option value="">Wybierz Film</option>
                             {moviesList.map(m => (<option key={m.id} value={m.id}>{m.title}</option>))}
                         </select>
                     </>
                 ) : (
                     <>
-                        <label className="font-medium">Series</label>
+                        <label className="font-medium">Serial</label>
                         <select className="border border-white p-2 rounded bg-transparent text-white" value={seriesId ?? ''} onChange={(e) => setSeriesId(Number(e.target.value) || null)}>
-                            <option value="">Select series</option>
+                            <option value="">Wybierz Serial</option>
                             {seriesList.map(s => (<option key={s.id} value={s.id}>{s.title}</option>))}
                         </select>
                     </>
                 )}
 
                 <div className="flex gap-2">
-                    <button className="bg-blue-500 text-white px-3 py-1 rounded" type="submit">Create Role</button>
+                    <button className="bg-blue-500 text-white px-3 py-1 rounded" type="submit">Dodaj role</button>
                 </div>
             </form>
         </section>

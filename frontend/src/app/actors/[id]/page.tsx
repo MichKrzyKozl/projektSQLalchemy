@@ -8,12 +8,13 @@ import ActorReview from "./components/actorRevievs";
 import ActorRating from "./components/actorRatings";
 import { useRouter } from "next/navigation";
 import SelectUser from "@/app/components/selectUser";
+import ActorSeries from "./components/actorSeries";
 
 const API_URL = "http://127.0.0.1:8000";
 
 type Movie = { id: number; title: string };
 type Role = { id: number; character_name: string; actor_id?: number };
-type Actor = { id: number; name: string; surname: string };
+type Actor = { id: number; name: string; surname: string,date_of_birth:any };
 type ActorMovie = { movie_id: number; title: string; role_id: number; character_name: string; avg_rating?: number | null };
 
 
@@ -22,19 +23,25 @@ export default function ActorPage() {
   const { id } = useParams();
   const [actor, setActor] = useState<Actor | null>(null);
   const [rating, setRating] = useState<any>(0)
-  const [actorRating, setActorRating] = useState<any[]>([]); const [actorMovies, setActorMovies] = useState<ActorMovie[] | null>(null)
+  const [actorRating, setActorRating] = useState<any[]>([]);
+  const [actorMovies, setActorMovies] = useState<ActorMovie[] | null>(null)
+  const [actorSeries, setActorSeries] = useState<any[] | null>(null)
   const { selectedUserId, setSelectedUserId } = useSelectedUser();
   const [selectedUserName, setSelectedUserName] = useState<string | null>(null);
 
   async function addReview() {
 
-    const res = await axios.post(`${API_URL}/actorReview`, {
-      value: rating,
-      user_id: selectedUserId,
-      reviewed_id: Number(id)
-
-    });
-    console.log(res.data)
+    try {
+      const res = await axios.post(`${API_URL}/actorReview`, {
+        value: rating,
+        user_id: selectedUserId,
+        reviewed_id: Number(id)
+      });
+      console.log(res.data);
+      await getActorRating();
+    } catch (e) {
+      console.error(e);
+    }
 
   }
 
@@ -50,6 +57,14 @@ export default function ActorPage() {
       setActorMovies([]);
     }
   }
+  async function getActorSeries() {
+    try {
+      const res = await axios.get(`${API_URL}/actorSeries/${id}`);
+      setActorSeries(res.data || []);
+    } catch (e) {
+      setActorSeries([]);
+    }
+  }
   async function getActorRating() {
     const res = await axios.get(`${API_URL}/actorratings/${id}`)
     console.log(res)
@@ -61,7 +76,8 @@ export default function ActorPage() {
     if (!id) return;
     loadActor();
     getActorMovies();
-    getActorRating()
+    getActorRating();
+    getActorSeries();
   }, [id]);
 
 
@@ -100,9 +116,12 @@ export default function ActorPage() {
               selectedUserName={selectedUserName}
               setSelectedUserId={setSelectedUserId} />
       <h1 className="text-3xl font-bold">{actor.name} {actor.surname}</h1>
+      <p>{actor.date_of_birth}</p>
       <ActorMovies
         actorMovies={actorMovies}
       />
+      <ActorSeries 
+      actorSeries ={actorSeries}/>
 
       <ActorRating
         actorRating={actorRating} />

@@ -1,29 +1,29 @@
-export default function SeriesRatings({movieRating} :any){
-    return(
-         <div className="mt-6">
-        <h2 className="text-xl font-semibold mb-2">Ratings</h2>
+export default function SeriesRatings({ seriesRating = [] }: any) {
+        const avg =
+                seriesRating.length > 0
+                        ? (
+                                    seriesRating.reduce(
+                                            (sum: number, r: any) => sum + (r.value ?? r.score ?? 0),
+                                            0
+                                    ) / seriesRating.length
+                            ).toFixed(1)
+                        : "0.0";
 
-        <h3>
-          average:{" "}
-          {movieRating.length
-            ? (
-              movieRating.reduce(
-                (sum: number, r: any) => sum + (r.value ?? r.score ?? 0),
-                0
-              ) / movieRating.length
-            ).toFixed(1)
-            : "0.0"}
-        </h3>
+        return (
+                <div className="mt-6">
+                        <h2 className="text-xl font-semibold mb-2">Oceny użytkowników</h2>
 
-        <ul className="list-disc list-inside">
-          {movieRating.length === 0 ? (
-            <li>No ratings yet</li>
-          ) : (
-            movieRating.map((r: any, i: number) => (
-              <li key={i}>{r.value}</li>
-            ))
-          )}
-        </ul>
-      </div>
-    )
+                        <h3>Średnia ocen: {avg}</h3>
+
+                        <ul className="list-disc list-inside">
+                                {seriesRating.length === 0 ? (
+                                        <li>Brak ocen</li>
+                                ) : (
+                                        seriesRating.map((r: any) => (
+                                                <li key={r.id ?? r.user_id}>{r.user_name ?? r.user_id}: {r.value ?? r.score}</li>
+                                        ))
+                                )}
+                        </ul>
+                </div>
+        );
 }

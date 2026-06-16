@@ -35,7 +35,6 @@ export default function Home() {
 
   useEffect(() => {
     fetchUsers();
-    // MovieList handles its own movies/categories fetching now
     fetchSeries();
     fetchActors();
   }, []);
@@ -63,7 +62,7 @@ export default function Home() {
         className="bg-gray-800 text-white px-3 py-1 rounded"
         onClick={() => router.push('/admin')}
       >
-        Admin Panel
+        Panel Admina
       </button>
 
       <SelectUser

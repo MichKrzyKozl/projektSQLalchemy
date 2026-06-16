@@ -25,13 +25,13 @@ export default function AddActor({ setMsg }: any) {
 
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-semibold">Add Actor</h2>
+      <h2 className="text-xl font-semibold">Dodaj aktora</h2>
       <form onSubmit={submit} className="flex flex-col gap-2 max-w-md">
-        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Surname" value={surname} onChange={(e) => setSurname(e.target.value)} />
+        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Imie" value={name} onChange={(e) => setName(e.target.value)} />
+        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Nazwisko" value={surname} onChange={(e) => setSurname(e.target.value)} />
         <input className="border border-white p-2 rounded bg-transparent text-white" type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
         <div className="flex gap-2">
-          <button className="bg-blue-500 text-white px-3 py-1 rounded" type="submit">Create Actor</button>
+          <button className="bg-blue-500 text-white px-3 py-1 rounded" type="submit">Stwórz Aktor</button>
         </div>
       </form>
     </section>

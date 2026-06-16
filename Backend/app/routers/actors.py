@@ -6,6 +6,8 @@ from app.models.actor import Actor
 from app.models.actorRating import ActorRating
 from app.models.MovieRole import MovieRole
 from app.models.user import User
+from app.models.series import Series
+from app.models.SeriesRole import SeriesRole
 from app.schemas.review import ReviewCreate
 from app.schemas.actor_create import ActorCreate
 
@@ -37,6 +39,8 @@ def get_actors(
         {
             "id": actor.id,
             "name": actor.name,
+			"surname": actor.surname,
+			"date_of_birth": actor.date_of_birth,
             "avg_rating": (
                 float(avg)
                 if avg is not None
@@ -80,7 +84,31 @@ def get_actor_movies(actor_id: int, db: Session = Depends(get_db)):
 
 	return results
 
+@router.get("/actorSeries/{actor_id}")
+def get_actor_series(actor_id: int, db: Session = Depends(get_db)):
+    roles = (
+        db.query(SeriesRole)
+        .filter(SeriesRole.actor_id == actor_id)
+        .all()
+    )
 
+    results = []
+
+    for role in roles:
+        avg = None
+
+        if role.ratings:
+            avg = sum(r.value for r in role.ratings) / len(role.ratings)
+
+        results.append({
+            "series_id": role.series.id,
+            "title": role.series.title,
+            "role_id": role.id,
+            "character_name": role.character_name,
+            "avg_rating": avg,
+        })
+
+    return results
 @router.get("/actorratings/{actor_id}")
 def get_actor_ratings(actor_id: int, db: Session = Depends(get_db)):
 	rows = (

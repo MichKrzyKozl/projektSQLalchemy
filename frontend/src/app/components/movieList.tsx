@@ -109,6 +109,7 @@ export default function MovieList({ router }: any) {
                         <th className={headerCell}>tytuł</th>
                         <th className={headerCell}>Kategoria</th>
                         <th className={headerCell}>Srednia ocena</th>
+                        <th className={headerCell}>Długośc</th>
                         <th className={headerCell}>data wydania</th>
                     </tr>
                 </thead>
@@ -128,6 +129,7 @@ export default function MovieList({ router }: any) {
                             <td className={cell}>{m.category}</td>
 
                             <td className={cell}>{m.avg_rating != null ? Number(m.avg_rating.toFixed(2)) : "-"}</td>
+                            <td className={cell}>{m.runtime_minutes}m</td>
                             <td className={cell}>{m.release_date}</td>
 
 

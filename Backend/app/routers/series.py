@@ -10,7 +10,7 @@ from app.models.actor import Actor
 from app.schemas.review import ReviewCreate
 from app.schemas.series_create import SeriesCreate
 from app.schemas.series_role_create import SeriesRoleCreate
-
+from app.models.user import User
 router = APIRouter()
 
 
@@ -56,6 +56,18 @@ def get_series_desc(category=None, db: Session = Depends(get_db)):
     return get_series(category=category, sort="desc", db=db)
 
 
+@router.get("/categories")
+def get_categories(db: Session = Depends(get_db)):
+    rows = db.query(Series.category).distinct().all()
+
+    categories = []
+    for category, in rows:
+        if category is not None:
+            categories.append(category)
+
+    return categories
+
+
 @router.get("/series/{series_id}")
 def get_series_item(series_id: int, db: Session = Depends(get_db)):
     series = db.query(Series).filter(Series.id == series_id).first()
@@ -82,9 +94,26 @@ def get_series_role_actors(series_id: int, db: Session = Depends(get_db)):
 
 @router.get("/seriesratings/{series_id}")
 def get_series_ratings(series_id: int, db: Session = Depends(get_db)):
-    ratings = db.query(SeriesRating).filter(SeriesRating.series_id == series_id).all()
-    return ratings
+    rows = (
+        db.query(SeriesRating, User)
+        .join(User, SeriesRating.user_id == User.id)
+        .filter(SeriesRating.series_id == series_id)
+        .all()
+    )
 
+    results = []
+
+    for series_rating, user in rows:
+        results.append(
+            {
+                "id": series_rating.id,
+                "value": series_rating.value,
+                "user_id": series_rating.user_id,
+                "user_name": user.name,
+            }
+        )
+
+    return results
 
 @router.post("/seriesReview")
 def create_review(review_data: ReviewCreate, db: Session = Depends(get_db)):

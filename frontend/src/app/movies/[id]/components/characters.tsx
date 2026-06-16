@@ -17,7 +17,7 @@ type Props = {
 export default function Characters({ roles, actors, movieroleRatings, roleRatingsInput, setRoleRatingsInput, addRoleReview }: Props) {
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-semibold mb-2">Characters</h2>
+      <h2 className="text-xl font-semibold mb-2">Obsada</h2>
 
       <ul className=" list-inside">
         {roles.map(role => {
@@ -63,7 +63,7 @@ export default function Characters({ roles, actors, movieroleRatings, roleRating
                   onClick={() => addRoleReview(role.id)}
                   className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
                 >
-                  Dodaj
+                  Oceń Role
                 </button>
               </div>
             </li>

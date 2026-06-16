@@ -10,6 +10,8 @@ from app.models.actor import Actor
 from app.schemas.review import ReviewCreate
 from app.schemas.movie_create import MovieCreate
 from app.schemas.movie_role_create import MovieRoleCreate
+from app.models.user import User
+
 
 router = APIRouter()
 
@@ -44,6 +46,7 @@ def get_movies(category=None, sort=None, db: Session = Depends(get_db)):
 			"title": movie.title,
 			"category": movie.category,
 			"release_date": movie.release_date,
+			"runtime_minutes": movie.runtime_minutes,
 			"avg_rating": float(avg) if avg is not None else None,		
 			}
 		
@@ -96,8 +99,26 @@ def get_movie_role_actors(movie_id: int, db: Session = Depends(get_db)):
 
 @router.get("/movieratings/{movie_id}")
 def get_movie_ratings(movie_id: int, db: Session = Depends(get_db)):
-	ratings = db.query(MovieRating).filter(MovieRating.movie_id == movie_id).all()
-	return ratings
+    rows = (
+        db.query(MovieRating, User)
+        .join(User, MovieRating.user_id == User.id)
+        .filter(MovieRating.movie_id == movie_id)
+        .all()
+    )
+
+    results = []
+
+    for movie_rating, user in rows:
+        results.append(
+            {
+                "id": movie_rating.id,
+                "value": movie_rating.value,
+                "user_id": movie_rating.user_id,
+                "user_name": user.name,
+            }
+        )
+
+    return results
 
 
 @router.post("/movieReview")

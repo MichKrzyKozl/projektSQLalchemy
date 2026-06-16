@@ -9,13 +9,14 @@
 export default function ActorList({ actors, router }: any) {
     return (
         <div>
-            <h2 className="text-xl font-semibold mb-2">Actors</h2>
+            <h2 className="text-xl font-semibold mb-2">Actor</h2>
             <table className={tableClass}>
                 <thead>
                     <tr>
                         <th className={headerCell}>ID</th>
                         <th className={headerCell}>Imię i nazwisko</th>
                         <th className={headerCell}>średnia ocena</th>
+                        <th className={headerCell}>Rok urodzenia</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +35,7 @@ export default function ActorList({ actors, router }: any) {
                                 {a.name} {a.surname}
                             </td>
                             <td className={cell}>{a.avg_rating != null ? Number(a.avg_rating.toFixed(2)) : "-"}</td>
+                            <td className={cell}> {a.date_of_birth}</td>
 
                         </tr>
                     ))}

@@ -27,14 +27,14 @@ export default function AddSeries({ setMsg }: any) {
 
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-semibold">Add Series</h2>
+      <h2 className="text-xl font-semibold">Dodaj serial</h2>
       <form onSubmit={submit} className="flex flex-col gap-2 max-w-md">
-        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Tytuł" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input className="border border-white p-2 rounded bg-transparent text-white" placeholder="Kategoria" value={category} onChange={(e) => setCategory(e.target.value)} />
         <input className="border border-white p-2 rounded bg-transparent text-white" type="date" value={release} onChange={(e) => setRelease(e.target.value)} />
-        <input className="border border-white p-2 rounded bg-transparent text-white" type="number" placeholder="Seasons" value={seasons as any} onChange={(e) => setSeasons(e.target.value === "" ? "" : Number(e.target.value))} />
+        <input className="border border-white p-2 rounded bg-transparent text-white" type="number" placeholder="Sezony" value={seasons as any} onChange={(e) => setSeasons(e.target.value === "" ? "" : Number(e.target.value))} />
         <div className="flex gap-2">
-          <button className="bg-blue-500 text-white px-3 py-1 rounded" type="submit">Create Series</button>
+          <button className="bg-blue-500 text-white px-3 py-1 rounded" type="submit">Dodaj serial</button>
         </div>
       </form>
     </section>

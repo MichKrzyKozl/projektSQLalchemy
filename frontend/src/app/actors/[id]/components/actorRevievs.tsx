@@ -11,7 +11,7 @@ type Props = {
 export default function ActorReview({ rating, setRating, addReview }: Props) {
   return (
     <div className=" border  p-4 shadow-md w-64 flex flex-col gap-3">
-      <h3 className="text-lg font-semibold">Add Actor review</h3>
+    
 
       <input
         type="range"
@@ -31,7 +31,7 @@ export default function ActorReview({ rating, setRating, addReview }: Props) {
         onClick={addReview}
         className="bg-gray-400 text-white py-2 rounded-lg hover:bg-white-700 cursor-pointer active:scale-95 transition"
       >
-        Dodaj
+        Oceń aktora
       </button>
     </div>
   );

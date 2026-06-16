@@ -13,9 +13,9 @@ export default function AdminPage() {
 
     return (
         <div className="p-10 text-white min-h-screen">
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
+            <h1 className="text-3xl font-bold">Panel Admina</h1>
             <p className="my-2 text-green-700">{msg}</p>
-            <button className="bg-gray-200 px-3 py-1 rounded mb-4" type="button" onClick={() => router.push('/')}>Back</button>
+            <button className="bg-gray-200 px-3 py-1 rounded mb-4" type="button" onClick={() => router.push('/')}>Strona główna</button>
 
             <AddActor setMsg={setMsg} />
             <AddRole setMsg={setMsg} />

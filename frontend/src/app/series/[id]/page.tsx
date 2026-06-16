@@ -148,7 +148,7 @@ export default function SeriesPage() {
         addReview={addReview} />
 
       <SeriesRatings
-        movieRating={seriesRating} />
+        seriesRating={seriesRating} />
     </div>
   );
 }
