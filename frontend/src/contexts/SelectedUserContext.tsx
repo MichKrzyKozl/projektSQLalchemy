@@ -10,7 +10,6 @@ type Ctx = {
 
 const SelectedUserContext = createContext<Ctx>({
   selectedUserId: null,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setSelectedUserId: () => {},
 });
 
@@ -20,15 +19,12 @@ export const SelectedUserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
-    try {
+  
       const raw = localStorage.getItem("selectedUserId");
       if (raw) {
         const parsed = Number(raw);
         if (!Number.isNaN(parsed)) setSelectedUserId(parsed);
       }
-    } catch (e) {
-      // ignore
-    }
   }, []);
 
   useEffect(() => {

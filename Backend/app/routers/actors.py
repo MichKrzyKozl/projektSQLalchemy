@@ -8,6 +8,7 @@ from app.models.actorRating import ActorRating
 from app.models.MovieRole import MovieRole
 from app.models.user import User
 from app.schemas.review import ReviewCreate
+from app.schemas.actor_create import ActorCreate
 
 router = APIRouter()
 
@@ -116,4 +117,17 @@ def create_actor_review(review_data: ReviewCreate, db: Session = Depends(get_db)
 	db.commit()
 	db.refresh(actor_review)
 	return actor_review
+
+
+@router.post("/actors")
+def create_actor(actor_data: ActorCreate, db: Session = Depends(get_db)):
+	actor = Actor(
+		name=actor_data.name,
+		surname=actor_data.surname,
+		date_of_birth=actor_data.date_of_birth,
+	)
+	db.add(actor)
+	db.commit()
+	db.refresh(actor)
+	return actor
 

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine
 from app.database import Base
 import app.models
-from app.routers import movies, actors, users
+from app.routers import movies, actors, users, series
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -24,5 +24,6 @@ def root():
 app.include_router(users.router)
 app.include_router(movies.router)
 app.include_router(actors.router)
+app.include_router(series.router)
 
 

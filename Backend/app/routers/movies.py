@@ -9,6 +9,8 @@ from app.models.MovieRole import MovieRole
 from app.models.MovieRoleRating import MovieRoleRating
 from app.models.actor import Actor
 from app.schemas.review import ReviewCreate
+from app.schemas.movie_create import MovieCreate
+from app.schemas.movie_role_create import MovieRoleCreate
 
 router = APIRouter()
 
@@ -127,8 +129,35 @@ def create_movie_role_review(review_data: ReviewCreate, db: Session = Depends(ge
 	return role_review
 
 
+@router.post("/movies")
+def create_movie(movie_data: MovieCreate, db: Session = Depends(get_db)):
+	movie = Movie(
+		title=movie_data.title,
+		category=movie_data.category,
+		release_date=movie_data.release_date,
+		runtime_minutes=movie_data.runtime_minutes,
+	)
+	db.add(movie)
+	db.commit()
+	db.refresh(movie)
+	return movie
+
+
 @router.get("/roleratings/{role_id}")
 def get_role_ratings(role_id: int, db: Session = Depends(get_db)):
 	ratings = db.query(MovieRoleRating).filter(MovieRoleRating.role_id == role_id).all()
 	return ratings
+
+
+@router.post("/movieroles")
+def create_movie_role(role_data: MovieRoleCreate, db: Session = Depends(get_db)):
+	role = MovieRole(
+		character_name=role_data.character_name,
+		actor_id=role_data.actor_id,
+		movie_id=role_data.movie_id,
+	)
+	db.add(role)
+	db.commit()
+	db.refresh(role)
+	return role
 

@@ -33,7 +33,7 @@ export default function ActorList({ actors, router }: any) {
                             <td className={cell}>
                                 {a.name} {a.surname}
                             </td>
-                            <td className={cell}>{Number(a.avg_rating.toFixed(2))}</td>
+                            <td className={cell}>{a.avg_rating != null ? Number(a.avg_rating.toFixed(2)) : "-"}</td>
 
                         </tr>
                     ))}
