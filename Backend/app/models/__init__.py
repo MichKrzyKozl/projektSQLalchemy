@@ -8,4 +8,4 @@ from app.models.actorRating import ActorRating
 from app.models.MovieRole import MovieRole
 from app.models.MovieRoleRating import MovieRoleRating
 from app.models.SeriesRole import SeriesRole
-from app.models.SeriesRoleRating import SeriesRoleRating  # noqa: F401
+from app.models.SeriesRoleRating import SeriesRoleRating
