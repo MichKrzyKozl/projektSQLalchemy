@@ -82,6 +82,13 @@ export default function MoviePage() {
     setMovieRoleRatings(results);
   }
 
+      async function deleteRating(id: number)
+    {
+        await axios.delete(`${API_URL}/movieRating/${id}`);
+        await getMovieRating()
+        
+    }
+
   useEffect(() => {
     loadMovie()
     getRoles()
@@ -148,7 +155,8 @@ export default function MoviePage() {
         addReview={addReview} />
 
       <MovieRatings
-        movieRating={movieRating} />
+        movieRating={movieRating} 
+        deleteRating={deleteRating}/>
     </div>
   );
 }

@@ -102,6 +102,12 @@ export default function ActorPage() {
       mounted = false;
     };
   }, [selectedUserId]);
+   async function deleteRating(id: number)
+    {
+        await axios.delete(`${API_URL}/actorRating/${id}`);
+        await getActorRating()
+        
+    }
 
   if (!actor) {
     return <div className="p-10">ładowanie...</div>;
@@ -124,7 +130,8 @@ export default function ActorPage() {
       actorSeries ={actorSeries}/>
 
       <ActorRating
-        actorRating={actorRating} />
+        actorRating={actorRating}
+        deleteRating={deleteRating} />
       <div>
         <ActorReview
           rating={rating}

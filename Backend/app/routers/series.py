@@ -116,27 +116,52 @@ def get_series_ratings(series_id: int, db: Session = Depends(get_db)):
     return results
 
 @router.post("/seriesReview")
-def create_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
+def create_series_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
     user_id = int(review_data.user_id)
+
+    existing = db.query(SeriesRating).filter(
+        SeriesRating.user_id == user_id,
+        SeriesRating.series_id == review_data.reviewed_id
+    ).first()
+
+    if existing:
+        existing.value = review_data.value
+        db.commit()
+        db.refresh(existing)
+        return existing
+
     series_review = SeriesRating(
         value=review_data.value,
         user_id=user_id,
         series_id=review_data.reviewed_id,
     )
+
     db.add(series_review)
     db.commit()
     db.refresh(series_review)
     return series_review
 
-
 @router.post("/seriesRoleReview")
 def create_series_role_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
     user_id = int(review_data.user_id)
+
+    existing = db.query(SeriesRoleRating).filter(
+        SeriesRoleRating.user_id == user_id,
+        SeriesRoleRating.role_id == review_data.reviewed_id
+    ).first()
+
+    if existing:
+        existing.value = review_data.value
+        db.commit()
+        db.refresh(existing)
+        return existing
+
     role_review = SeriesRoleRating(
         value=review_data.value,
         user_id=user_id,
         role_id=review_data.reviewed_id,
     )
+
     db.add(role_review)
     db.commit()
     db.refresh(role_review)
@@ -174,3 +199,15 @@ def create_series_role(role_data: SeriesRoleCreate, db: Session = Depends(get_db
     db.commit()
     db.refresh(role)
     return role
+
+@router.delete("/seriesRating/{rating_id}")
+def delete_series_rating(rating_id: int, db: Session = Depends(get_db)):
+    rating = db.query(SeriesRating).filter(SeriesRating.id == rating_id).first()
+
+    if not rating:
+        return {"error": "not found"}
+
+    db.delete(rating)
+    db.commit()
+
+    return {}

@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useSelectedUser } from "@/contexts/SelectedUserContext";
 
-export default function ActorRating({ actorRating }: any) {
+export default function ActorRating({ actorRating,deleteRating }: any) {
     
     const API_URL = "http://127.0.0.1:8000";
-   
+         const { selectedUserId } = useSelectedUser();
+
     return (
         <div>
             <span> średnia : {
@@ -19,7 +19,15 @@ export default function ActorRating({ actorRating }: any) {
                 {actorRating.length === 0 ? (
                     <br />) : (
                     actorRating.map((r: any, i: number) => (
-                        <li key={i}>{r.user_name} {r.value} </li>
+                        <li key={i}>{r.user_name} {r.value}  
+                         {selectedUserId === r.user_id && (
+                                <button
+                                    className="ml-3 text-red-500"
+                                    onClick={() => deleteRating(r.id)}
+                                >
+                                    Usuń
+                                </button>
+                            )}</li>
                     ))
                 )}
             </ul> </div>

@@ -10,12 +10,12 @@ import SelectUser from "../../components/selectUser";
 import SeriesRatings from ".//components/seriesRatings";
 const API_URL = "http://127.0.0.1:8000";
 
-type SeriesType = { id: number; title: string; release_date:any };
+type SeriesType = { id: number; title: string; release_date: any };
 type Role = { id: number; character_name: string; actor_id?: number };
 type Actor = { id: number; name: string; surname: string };
 
 export default function SeriesPage() {
-    const router = useRouter();
+  const router = useRouter();
   const { id } = useParams();
   const [rating, setRating] = useState(5);
   const [roleRatingsInput, setRoleRatingsInput] = useState<{
@@ -81,6 +81,12 @@ export default function SeriesPage() {
     setSeriesRoleRatings(results);
   }
 
+  async function deleteRating(id: number) {
+    await axios.delete(`${API_URL}/seriesRating/${id}`);
+    await getSeriesRating()
+
+  }
+
   useEffect(() => {
     loadSeries()
     getRoles()
@@ -123,8 +129,8 @@ export default function SeriesPage() {
 
   return (
     <div className="p-10">
-      <div                            onClick={() => router.push(`/`)}
-> Strona głowna </div>
+      <div onClick={() => router.push(`/`)}
+      > Strona głowna </div>
       <h1 className="text-3xl font-bold">{series.title}</h1>
       <SelectUser
         selectedUserId={selectedUserId}
@@ -148,7 +154,8 @@ export default function SeriesPage() {
         addReview={addReview} />
 
       <SeriesRatings
-        seriesRating={seriesRating} />
+        seriesRating={seriesRating}
+        deleteRating={deleteRating} />
     </div>
   );
 }

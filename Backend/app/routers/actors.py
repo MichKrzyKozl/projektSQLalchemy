@@ -131,19 +131,31 @@ def get_actor_ratings(actor_id: int, db: Session = Depends(get_db)):
 
 	return results
 
-
 @router.post("/actorReview")
 def create_actor_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
-	user_id = int(review_data.user_id)
-	actor_review = ActorRating(
-		value=review_data.value,
-		user_id=user_id,
-		actor_id=review_data.reviewed_id,
-	)
-	db.add(actor_review)
-	db.commit()
-	db.refresh(actor_review)
-	return actor_review
+    user_id = int(review_data.user_id)
+
+    existing = db.query(ActorRating).filter(
+        ActorRating.user_id == user_id,
+        ActorRating.actor_id == review_data.reviewed_id
+    ).first()
+
+    if existing:
+        existing.value = review_data.value
+        db.commit()
+        db.refresh(existing)
+        return existing
+
+    actor_review = ActorRating(
+        value=review_data.value,
+        user_id=user_id,
+        actor_id=review_data.reviewed_id,
+    )
+
+    db.add(actor_review)
+    db.commit()
+    db.refresh(actor_review)
+    return actor_review
 
 
 @router.post("/actors")
@@ -157,4 +169,16 @@ def create_actor(actor_data: ActorCreate, db: Session = Depends(get_db)):
 	db.commit()
 	db.refresh(actor)
 	return actor
+
+@router.delete("/actorRating/{rating_id}")
+def delete_series_rating(rating_id: int, db: Session = Depends(get_db)):
+    rating = db.query(ActorRating).filter(ActorRating.id == rating_id).first()
+
+    if not rating:
+        return {"error": "not found"}
+
+    db.delete(rating)
+    db.commit()
+
+    return {}
 

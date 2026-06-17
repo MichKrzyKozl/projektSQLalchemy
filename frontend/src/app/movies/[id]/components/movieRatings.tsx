@@ -1,5 +1,9 @@
-export default function MovieRatings({ movieRating = [] }: any)
+import { useSelectedUser } from "@/contexts/SelectedUserContext";
+
+export default function MovieRatings({ movieRating = [],deleteRating }: any)
 {
+      const { selectedUserId } = useSelectedUser();
+
     const avg =
         movieRating.length > 0
             ? (
@@ -25,6 +29,14 @@ export default function MovieRatings({ movieRating = [] }: any)
                     movieRating.map((r: any) => (
                         <li key={r.id}>
                             {r.user_name}: {r.value}
+                             {selectedUserId === r.user_id && (
+                                <button
+                                    className="ml-3 text-red-500"
+                                    onClick={() => deleteRating(r.id)}
+                                >
+                                    Usuń
+                                </button>
+                            )}
                         </li>
                     ))
                 )}

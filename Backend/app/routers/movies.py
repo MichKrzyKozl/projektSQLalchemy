@@ -123,17 +123,29 @@ def get_movie_ratings(movie_id: int, db: Session = Depends(get_db)):
 
 @router.post("/movieReview")
 def create_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
-	user_id = int(review_data.user_id)
-	movie_review = MovieRating(
-		value=review_data.value,
-		user_id=user_id,
-		movie_id=review_data.reviewed_id,
-	)
-	db.add(movie_review)
-	db.commit()
-	db.refresh(movie_review)
-	return movie_review
+    user_id = int(review_data.user_id)
 
+    existing = db.query(MovieRating).filter(
+        MovieRating.user_id == user_id,
+        MovieRating.movie_id == review_data.reviewed_id
+    ).first()
+
+    if existing:
+        existing.value = review_data.value
+        db.commit()
+        db.refresh(existing)
+        return existing
+
+    movie_review = MovieRating(
+        value=review_data.value,
+        user_id=user_id,
+        movie_id=review_data.reviewed_id,
+    )
+
+    db.add(movie_review)
+    db.commit()
+    db.refresh(movie_review)
+    return movie_review
 
 @router.post("/movieRoleReview")
 def create_movie_role_review(review_data: ReviewCreate, db: Session = Depends(get_db)):
@@ -181,3 +193,14 @@ def create_movie_role(role_data: MovieRoleCreate, db: Session = Depends(get_db))
 	db.refresh(role)
 	return role
 
+@router.delete("/movieRating/{rating_id}")
+def delete_series_rating(rating_id: int, db: Session = Depends(get_db)):
+    rating = db.query(MovieRating).filter(MovieRating.id == rating_id).first()
+
+    if not rating:
+        return {"error": "not found"}
+
+    db.delete(rating)
+    db.commit()
+
+    return {}
