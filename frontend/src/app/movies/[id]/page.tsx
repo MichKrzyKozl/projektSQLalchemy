@@ -38,7 +38,7 @@ export default function MoviePage() {
 
     });
     console.log(res.data)
-
+    await getMovieRating()
   }
   async function addRoleReview(roleId: number) {
     const res = await axios.post(`${API_URL}/movieRoleReview`, {
@@ -46,6 +46,7 @@ export default function MoviePage() {
       user_id: selectedUserId,
       reviewed_id: roleId
     });
+          await getAllRoleRatings();
 
     console.log(res.data);
   }

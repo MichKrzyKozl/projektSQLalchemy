@@ -38,7 +38,7 @@ export default function SeriesPage() {
 
     });
     console.log(res.data)
-
+    await getSeriesRating()
   }
   async function addRoleReview(roleId: number) {
     const res = await axios.post(`${API_URL}/seriesRoleReview`, {
@@ -46,7 +46,7 @@ export default function SeriesPage() {
       user_id: selectedUserId,
       reviewed_id: roleId
     });
-
+    await getAllRoleRatings()
     console.log(res.data);
   }
 

@@ -7,7 +7,7 @@ const selectedRow = "bg-gray-800 font-semibold";
 export default function UserList({users,selectedUserId,setSelectedUserId}:any){
     return(
         <div>
-          <h2 className="text-xl font-semibold mb-2">Users</h2>
+          <h2 className="text-xl font-semibold mb-2">Użytkownicy</h2>
           <table className={tableClass}>
             <thead>
               <tr>

@@ -75,9 +75,9 @@ export default function MovieList({ router }: any) {
 
     return (
         <div>
-            <h2 className="text-xl font-semibold mb-2">Movies</h2>
+            <h2 className="text-xl font-semibold mb-2">Filmy</h2>
 
-            <div className="flex flex-col gap-2 mb-2">
+            <div className="flex flex-col gap-2 mb-2 border border-white p-6">
                 <label className="font-medium">Kategoria</label>
                 <select
                     value={categoryFilter}
@@ -105,7 +105,6 @@ export default function MovieList({ router }: any) {
             <table className={tableClass}>
                 <thead>
                     <tr>
-                        <th className={headerCell}>ID</th>
                         <th className={headerCell}>tytuł</th>
                         <th className={headerCell}>Kategoria</th>
                         <th className={headerCell}>Srednia ocena</th>
@@ -124,10 +123,8 @@ export default function MovieList({ router }: any) {
                             }}
                             className={rowInteractive}
                         >
-                            <td className={cell}>{m.id}</td>
                             <td className={cell}>{m.title}</td>
                             <td className={cell}>{m.category}</td>
-
                             <td className={cell}>{m.avg_rating != null ? Number(m.avg_rating.toFixed(2)) : "-"}</td>
                             <td className={cell}>{m.runtime_minutes}m</td>
                             <td className={cell}>{m.release_date}</td>
