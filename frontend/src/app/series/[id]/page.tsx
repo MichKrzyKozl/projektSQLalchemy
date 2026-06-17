@@ -137,7 +137,6 @@ export default function SeriesPage() {
         selectedUserName={selectedUserName}
         setSelectedUserId={setSelectedUserId} />
 
-      <p>Series ID: {series.id}</p>
       <p>Data wydania: {series.release_date}</p>
 
       <Characters

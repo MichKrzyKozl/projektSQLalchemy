@@ -122,7 +122,7 @@ export default function ActorPage() {
               selectedUserName={selectedUserName}
               setSelectedUserId={setSelectedUserId} />
       <h1 className="text-3xl font-bold">{actor.name} {actor.surname}</h1>
-      <p>{actor.date_of_birth}</p>
+      <p>Rok urodzenia: {actor.date_of_birth}</p>
       <ActorMovies
         actorMovies={actorMovies}
       />

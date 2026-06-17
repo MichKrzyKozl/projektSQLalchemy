@@ -20,9 +20,7 @@ def get_series(category=None, sort=None, db: Session = Depends(get_db)):
         db.query(
             Series,
             func.avg(SeriesRating.value).label("avg_rating")
-        )
-        .outerjoin(SeriesRating, SeriesRating.series_id == Series.id)
-        .group_by(Series.id)
+        ) .outerjoin(SeriesRating, SeriesRating.series_id == Series.id).group_by(Series.id)
     )
     if category:
         query = query.filter(Series.category == category)
@@ -42,9 +40,7 @@ def get_series(category=None, sort=None, db: Session = Depends(get_db)):
 			"avg_rating": float(avg) if avg is not None else None,		
         }
         formatted_series.append(end)
-
     return formatted_series
-
 
 @router.get("/series/asc")
 def get_series_asc(category=None, db: Session = Depends(get_db)):
@@ -58,13 +54,10 @@ def get_series_desc(category=None, db: Session = Depends(get_db)):
 
 @router.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
-    rows = db.query(Series.category).distinct().all()
-
+    bad_categories = db.query(Series.category).distinct().all()
     categories = []
-    for category, in rows:
-        if category is not None:
-            categories.append(category)
-
+    for category, in bad_categories:
+         categories.append(category[0])
     return categories
 
 
@@ -203,10 +196,6 @@ def create_series_role(role_data: SeriesRoleCreate, db: Session = Depends(get_db
 @router.delete("/seriesRating/{rating_id}")
 def delete_series_rating(rating_id: int, db: Session = Depends(get_db)):
     rating = db.query(SeriesRating).filter(SeriesRating.id == rating_id).first()
-
-    if not rating:
-        return {"error": "not found"}
-
     db.delete(rating)
     db.commit()
 

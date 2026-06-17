@@ -10,45 +10,35 @@ from app.models.series import Series
 from app.models.SeriesRole import SeriesRole
 from app.schemas.review import ReviewCreate
 from app.schemas.actor_create import ActorCreate
+from app.models.SeriesRoleRating import SeriesRoleRating
 
 router = APIRouter()
 
 
 @router.get("/actors")
-def get_actors(
-    db: Session = Depends(get_db)
-):
+def get_actors(db: Session = Depends(get_db)):
     rows = (
         db.query(
             Actor,
-            func.avg(
-                ActorRating.value
-            ).label("avg_rating")
+            func.avg(ActorRating.value).label("avg_rating")
         )
-        .outerjoin(
-            ActorRating,
-            ActorRating.actor_id == Actor.id
-        )
-        .group_by(
-            Actor.id
-        )
+        .outerjoin(ActorRating, ActorRating.actor_id == Actor.id)
+        .group_by(Actor.id)
         .all()
     )
 
-    return [
-        {
+    result = []
+
+    for actor, avg in rows:
+        result.append({
             "id": actor.id,
             "name": actor.name,
-			"surname": actor.surname,
-			"date_of_birth": actor.date_of_birth,
-            "avg_rating": (
-                float(avg)
-                if avg is not None
-                else None
-            ),
-        }
-        for actor, avg in rows
-    ]
+            "surname": actor.surname,
+            "date_of_birth": actor.date_of_birth,
+            "avg_rating": float(avg) if avg is not None else None,
+        })
+
+    return result
 
 
 @router.get("/actors/{actor_id}")
@@ -86,29 +76,29 @@ def get_actor_movies(actor_id: int, db: Session = Depends(get_db)):
 
 @router.get("/actorSeries/{actor_id}")
 def get_actor_series(actor_id: int, db: Session = Depends(get_db)):
-    roles = (
-        db.query(SeriesRole)
+    rows = (
+        db.query(
+            SeriesRole,
+            func.avg(SeriesRoleRating.value).label("avg_rating")
+        )
+        .outerjoin(SeriesRoleRating, SeriesRoleRating.role_id == SeriesRole.id)
         .filter(SeriesRole.actor_id == actor_id)
+        .group_by(SeriesRole.id)
         .all()
     )
 
-    results = []
+    result = []
 
-    for role in roles:
-        avg = None
-
-        if role.ratings:
-            avg = sum(r.value for r in role.ratings) / len(role.ratings)
-
-        results.append({
+    for role, avg in rows:
+        result.append({
             "series_id": role.series.id,
             "title": role.series.title,
             "role_id": role.id,
             "character_name": role.character_name,
-            "avg_rating": avg,
+            "avg_rating": float(avg) if avg is not None else None,
         })
 
-    return results
+    return result
 @router.get("/actorratings/{actor_id}")
 def get_actor_ratings(actor_id: int, db: Session = Depends(get_db)):
 	rows = (
